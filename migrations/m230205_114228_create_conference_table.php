@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%conference}}`.
  */
-class m230405_114228_create_conference_table extends Migration
+class m230205_114228_create_conference_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -15,8 +15,9 @@ class m230405_114228_create_conference_table extends Migration
         $this->createTable('{{%conference}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(255)->notNull(),
-            'start_date' => $this->date()->notNull(),
-            'end_date' => $this->date()->notNull(),
+            'accepting_end' => $this->dateTime()->null(),
+            'start_date' => $this->dateTime()->notNull(),
+            'end_date' => $this->dateTime()->notNull(),
             'description' => $this->text()->null(),
             'link' => $this->string(255)->null(),
             'filename' => $this->string(255)->null(),

@@ -12,18 +12,18 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <div class="row">
-        <div class="col-4">
-            <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-        </div>
-    </div>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <div class="row">
-        <div class="col-4">
-            <div class="form-group">
-                <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
-            </div>
-        </div>
+    <?= $form->field($model, 'status')->textInput() ?>
+
+    <?= $form->field($model, 'conference_id')->textInput() ?>
+
+    <?= $form->field($model, 'created_at')->textInput() ?>
+
+    <?= $form->field($model, 'updated_at')->textInput() ?>
+
+    <div class="form-group">
+        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

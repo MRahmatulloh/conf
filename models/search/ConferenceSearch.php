@@ -4,12 +4,12 @@ namespace app\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Category;
+use app\models\Conference;
 
 /**
- * CategorySearch represents the model behind the search form of `app\models\Category`.
+ * ConferenceSearch represents the model behind the search form of `app\models\Conference`.
  */
-class CategorySearch extends Category
+class ConferenceSearch extends Conference
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class CategorySearch extends Category
     public function rules()
     {
         return [
-            [['id', 'status', 'conference_id', 'created_at', 'updated_at'], 'integer'],
-            [['name'], 'safe'],
+            [['id', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['name', 'accepting_end', 'start_date', 'end_date', 'description', 'link', 'filename'], 'safe'],
         ];
     }
 
@@ -40,7 +40,7 @@ class CategorySearch extends Category
      */
     public function search($params)
     {
-        $query = Category::find();
+        $query = Conference::find();
 
         // add conditions that should always apply here
 
@@ -59,13 +59,20 @@ class CategorySearch extends Category
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'accepting_end' => $this->accepting_end,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
             'status' => $this->status,
-            'conference_id' => $this->conference_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'created_by' => $this->created_by,
+            'updated_by' => $this->updated_by,
         ]);
 
-        $query->andFilterWhere(['like', 'name', $this->name]);
+        $query->andFilterWhere(['like', 'name', $this->name])
+            ->andFilterWhere(['like', 'description', $this->description])
+            ->andFilterWhere(['like', 'link', $this->link])
+            ->andFilterWhere(['like', 'filename', $this->filename]);
 
         return $dataProvider;
     }

@@ -4,6 +4,7 @@ use yii\symfonymailer\Mailer;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+require __DIR__ . '/env.php';
 
 $config = [
     'id' => 'yii_basic_appx',
@@ -18,15 +19,12 @@ $config = [
     'modules' => [
         'admin' => [
             'class' => 'mdm\admin\Module',
-        ],
-        'cash' => [
-            'class' => 'app\modules\cash\Module',
-        ],
+        ]
     ],
     'components' => [
         'telegram' => [
             'class' => 'app\components\Telegram',
-            'botToken' => '6144336497:AAGNaip1Imyz18UvddVhdH2vlZg74F37LQ0',
+            'botToken' => BOT_TOKEN,
         ],
         'request' => [
             'cookieValidationKey' => '9gBv8QfLRRNsxapHihClqPNQs03euDhl',
@@ -66,8 +64,7 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '' => 'dashboard/index',
-                'index'=>'dashboard/index',
+                '' => 'site/index',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
         ],

@@ -37,6 +37,7 @@ tests/_support/_generated
 
 #db config
 /config/db.php
+/config/env.php
 
 #assets cache
 /web/assets/
@@ -50,3 +51,5 @@ tests/_support/_generated
 
 # for goods img files
 /web/img/goods/
+
+

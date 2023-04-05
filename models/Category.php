@@ -2,23 +2,22 @@
 
 namespace app\models;
 
-use app\components\ItemsTrait;
-use yii\behaviors\TimestampBehavior;
+use Yii;
 
 /**
  * This is the model class for table "category".
  *
  * @property int $id
  * @property string $name
- * @property int $status
+ * @property int|null $status
+ * @property int $conference_id
  * @property int $created_at
  * @property int $updated_at
  *
- * @property Goods[] $goods
+ * @property Conference $conference
  */
-class Category extends MyModel
+class Category extends \yii\db\ActiveRecord
 {
-    use ItemsTrait;
     /**
      * {@inheritdoc}
      */
@@ -28,25 +27,16 @@ class Category extends MyModel
     }
 
     /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        return [
-            TimestampBehavior::className(),
-        ];
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['name'], 'required'],
-            [['status'], 'integer'],
+            [['name', 'conference_id', 'created_at', 'updated_at'], 'required'],
+            [['status', 'conference_id', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['name'], 'unique'],
+            [['conference_id'], 'exist', 'skipOnError' => true, 'targetClass' => Conference::class, 'targetAttribute' => ['conference_id' => 'id']],
         ];
     }
 
@@ -57,20 +47,21 @@ class Category extends MyModel
     {
         return [
             'id' => 'ID',
-            'name' => 'Название',
-            'status' => 'Статус',
+            'name' => 'Name',
+            'status' => 'Status',
+            'conference_id' => 'Conference ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
     }
 
     /**
-     * Gets query for [[Goods]].
+     * Gets query for [[Conference]].
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getGoods()
+    public function getConference()
     {
-        return $this->hasMany(Goods::class, ['category_id' => 'id']);
+        return $this->hasOne(Conference::class, ['id' => 'conference_id']);
     }
 }
