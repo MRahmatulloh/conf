@@ -14,7 +14,7 @@ class m230405_095839_create_application_table extends Migration
     {
         $this->createTable('{{%application}}', [
             'id' => $this->primaryKey(),
-            'conference_id' => $this->integer()->notNull(),
+            'conference_id' => $this->integer()->null(),
             'sender_first_name' => $this->string(255)->notNull(),
             'sender_last_name' => $this->string(255)->notNull(),
             'owners' => $this->text()->null(),
@@ -26,6 +26,7 @@ class m230405_095839_create_application_table extends Migration
             'is_first' => $this->boolean()->defaultValue(true),
             'status' => $this->integer()->defaultValue(1),
             'link' => $this->string(255)->null(),
+            'filename' => $this->string(255)->null(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
             'created_by' => $this->integer()->null(),

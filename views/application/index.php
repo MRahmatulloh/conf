@@ -22,11 +22,6 @@ AppAsset::register($this);
         <div class="col-6">
             <h2><?= Html::encode($this->title) ?></h2>
         </div>
-        <div class="col-6">
-            <p class="text-right">
-                <?= Html::a("<i class='fas fa-plus white_text'></i> " . ' ', ['create'], ['class' => 'btn btn-success']) ?>
-            </p>
-        </div>
     </div>
 
     <?= GridView::widget([
@@ -41,18 +36,29 @@ AppAsset::register($this);
                     return date('d.m.Y H:i:s', $model->created_at);
                 }
             ],
+
+            [
+                'attribute' => 'conference_id',
+                'value' => function (Application $model) {
+                    return $model->conference->name ?? '';
+                },
+            ],
+
             'sender_first_name',
+
             'sender_last_name',
+
             'owners:ntext',
+
             [
                 'attribute' => 'category_id',
                 'value' => function (Application $model) {
-                    return $model->category_id ? Application::CATERORIES[$model->category_id] : '';
+                    return $model->conference ?? '';
                 },
                 'filter' => Select2::widget([
                     'model' => $searchModel,
                     'attribute' => 'category_id',
-                    'data' => Application::CATERORIES,
+                    'data' => \app\models\Category::selectList() ?? '',
                     'initValueText' => $searchModel->category_id,
                     'options' => ['placeholder' => 'Выберите ...'],
                     'pluginOptions' => [
@@ -75,15 +81,20 @@ AppAsset::register($this);
             [
                 'attribute' => 'status',
                 'value' => function(Application $model){
-                    return $model->status == 1 ? 'Новая' : 'Обработана';
-                }
+                    return Application::STATUS_ARRAY[$model->status];
+                },
+                'filter' => Select2::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'status',
+                    'data' => Application::STATUS_ARRAY,
+                    'initValueText' => $searchModel->status,
+                    'options' => ['placeholder' => 'Выберите ...'],
+                    'pluginOptions' => [
+                        'allowClear' => true
+                    ],
+                ]),
             ],
 
-            'link',
-            //'created_at',
-            //'updated_at',
-            //'created_by',
-            //'updated_by',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Application $model, $key, $index, $column) {

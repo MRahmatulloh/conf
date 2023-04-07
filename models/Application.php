@@ -14,6 +14,7 @@ use yii\db\ActiveRecord;
  * @property string $sender_last_name
  * @property string|null $owners
  * @property int $category_id
+ * @property int $conference_id
  * @property string $article_name
  * @property string|null $comment
  * @property string $phone
@@ -21,26 +22,22 @@ use yii\db\ActiveRecord;
  * @property int|null $is_first
  * @property int|null $status
  * @property string $link
+ * @property string $filename
  * @property int $created_at
  * @property int $updated_at
  * @property int|null $created_by
  * @property int|null $updated_by
+ *
+ * @property Conference $conference
  */
 class Application extends ActiveRecord
 {
     public $file;
 
-    public const CATERORIES = [
-        1 => 'Raqamli texnologiyalar, bulutli hisoblash va sun’iy intellekt',
-        2 => 'Amaliy matematika: matematik modellashtirish va sonli usullar',
-        3 => 'Raqamli iqtisodiyot va elektron hukumat tizimi muammolari',
-        4 => 'Iqtisodiyotda innovatsion texnologiyalar: raqamli transformatsiya',
-        5 => 'Biznes boshqarish tizimlarining dolzarb masalalari',
-        6 => 'Xorijiy tillarni o‘qitishda innovatsion usullar',
-        7 => 'Raqamli pedagogika dolzarb masalalarining innovatsion yechimlari',
-        8 => 'Maktabgacha ta’lim pedagogikasida zamonaviy o‘qitish usullari',
-        9 => 'Psixologiya fanlarining dolzarb masalalari va innovatsion yondoshuvlar',
-        10 => 'O‘zbek tili nazariyasi va kompyuter lingvistikasi',
+    public const STATUS_ARRAY = [
+        1 => 'Yangi',
+        2 => 'Qabul qilingan',
+        3 => 'Rad etilgan',
     ];
 
     /**
@@ -67,12 +64,12 @@ class Application extends ActiveRecord
     public function rules()
     {
         return [
-            [['sender_first_name', 'sender_last_name', 'category_id', 'article_name', 'phone', 'email', 'file'], 'required'],
+            [['sender_first_name', 'sender_last_name', 'category_id', 'conference_id','article_name', 'phone', 'email'], 'required'],
             [['owners', 'comment'], 'string', 'max' => 600],
             [['email'], 'email'],
             [['category_id', 'is_first', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
-            [['sender_first_name', 'sender_last_name', 'article_name', 'phone', 'email', 'link'], 'string', 'max' => 255],
-            [['file'], 'file', 'extensions' => 'doc, docx, pdf, rtf', 'maxFiles' => 1, 'maxSize' => 8 * 1024 * 1024]
+            [['sender_first_name', 'sender_last_name', 'article_name', 'phone', 'email', 'link', 'filename'], 'string', 'max' => 255],
+            [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'doc, docx, pdf, rtf', 'maxFiles' => 1, 'maxSize' => 8 * 1024 * 1024]
         ];
     }
 
@@ -87,6 +84,7 @@ class Application extends ActiveRecord
             'sender_last_name' => 'Фамилия отправителя',
             'owners' => 'Владельцы статей',
             'category_id' => 'Направление',
+            'conference_id' => 'Конференция',
             'article_name' => 'Тема статьи',
             'comment' => 'Комментарий',
             'phone' => 'Телефон',
@@ -100,5 +98,10 @@ class Application extends ActiveRecord
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
         ];
+    }
+
+    public function getConference()
+    {
+        return $this->hasOne(Conference::class, ['id' => 'conference_id']);
     }
 }

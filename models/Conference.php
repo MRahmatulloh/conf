@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "conference".
@@ -15,6 +16,10 @@ use Yii;
  * @property string|null $description
  * @property string|null $link
  * @property string|null $filename
+ * @property string|null $place
+ * @property string|null $short
+ * @property string|null $responsible_tel
+ * @property string|null $responsible_person
  * @property int|null $status
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -26,6 +31,8 @@ use Yii;
  */
 class Conference extends \yii\db\ActiveRecord
 {
+    public $file;
+
     /**
      * {@inheritdoc}
      */
@@ -34,17 +41,26 @@ class Conference extends \yii\db\ActiveRecord
         return 'conference';
     }
 
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className(),
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['name', 'start_date', 'end_date'], 'required'],
+            [['name', 'start_date', 'end_date', 'description', 'short', 'responsible_person', 'responsible_tel'], 'required'],
+            [['file'], 'required', 'on' => 'create'],
             [['accepting_end', 'start_date', 'end_date'], 'safe'],
-            [['description'], 'string'],
+            [['description', 'short'], 'string'],
             [['status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
-            [['name', 'link', 'filename'], 'string', 'max' => 255],
+            [['name', 'link', 'filename', 'place', 'responsible_person', 'responsible_tel'], 'string', 'max' => 255],
+            [['file'], 'file', 'extensions' => 'doc, docx, pdf, rtf', 'maxFiles' => 1, 'maxSize' => 8 * 1024 * 1024]
         ];
     }
 
@@ -60,8 +76,13 @@ class Conference extends \yii\db\ActiveRecord
             'start_date' => 'Дата начала',
             'end_date' => 'Дата окончания',
             'description' => 'Описание',
-            'link' => 'Link',
+            'link' => 'Ссылка',
+            'place' => 'Место проведения',
+            'short' => 'Краткое описание',
+            'responsible_person' => 'Ответственное лицо',
+            'responsible_tel' => 'Телефон ответственного лица',
             'filename' => 'Filename',
+            'file' => 'Загрузить файл с описанием конференции',
             'status' => 'Статус',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -88,5 +109,30 @@ class Conference extends \yii\db\ActiveRecord
     public function getCategories()
     {
         return $this->hasMany(Category::class, ['conference_id' => 'id']);
+    }
+
+    public function getDateTitle()
+    {
+        return Yii::$app->formatter->asDate($this->start_date, 'php:d') . ' - ' .
+            Yii::$app->formatter->asDate($this->end_date, 'php:d') . ' ' .
+            Yii::$app->formatter->asDate($this->end_date, 'php:F') . ' ' .
+            Yii::$app->formatter->asDate($this->end_date, 'php:Y');
+    }
+
+    public function getStatusName(){
+        return $this->status ? 'Активна' : 'Неактивна';
+    }
+
+    public function getResponsibleInfo(){
+        return $this->responsible_person . ', +998 ' . $this->responsible_tel;
+    }
+
+    public function checkDate(){
+        if($this->start_date > $this->end_date){
+            $this->addError('start_date', 'Дата начала не может быть больше даты окончания');
+        }
+        if($this->accepting_end > $this->start_date){
+            $this->addError('accepting_end', 'Крайний срок подачи заявок не может быть больше даты начала');
+        }
     }
 }

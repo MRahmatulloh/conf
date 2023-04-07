@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "category".
@@ -26,17 +28,25 @@ class Category extends \yii\db\ActiveRecord
         return 'category';
     }
 
+
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::className(),
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['name', 'conference_id', 'created_at', 'updated_at'], 'required'],
+            [['name', 'conference_id'], 'required'],
             [['status', 'conference_id', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['name'], 'unique'],
-            [['conference_id'], 'exist', 'skipOnError' => true, 'targetClass' => Conference::class, 'targetAttribute' => ['conference_id' => 'id']],
+            [['conference_id'], 'exist', 'skipOnError' => false, 'targetClass' => Conference::class, 'targetAttribute' => ['conference_id' => 'id']],
         ];
     }
 
@@ -47,9 +57,9 @@ class Category extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'status' => 'Status',
-            'conference_id' => 'Conference ID',
+            'name' => 'Название направления',
+            'status' => 'Статус',
+            'conference_id' => 'Конференция',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -63,5 +73,10 @@ class Category extends \yii\db\ActiveRecord
     public function getConference()
     {
         return $this->hasOne(Conference::class, ['id' => 'conference_id']);
+    }
+
+    public static function selectList()
+    {
+        return ArrayHelper::map(self::find()->all(), 'id', 'name');
     }
 }

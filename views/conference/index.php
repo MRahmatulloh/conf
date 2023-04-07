@@ -32,17 +32,27 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'name',
+            [
+                'attribute' => 'name',
+                'format' => 'raw',
+                'value' => function(Conference $model){
+                    return Html::a($model->name, ['directions', 'id' => $model->id]);
+                },
+            ],
             'start_date',
             'end_date',
-            'description:ntext',
-            //'link',
-            //'filename',
-            'status',
-            //'created_at',
-            //'updated_at',
-            //'created_by',
-            //'updated_by',
+            'accepting_end',
+            'responsible_person',
+            'responsible_tel',
+            'place',
+
+            [
+                'attribute' =>'status',
+                'value' => function(Conference $model){
+                    return $model->getStatusName();
+                },
+            ],
+
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Conference $model, $key, $index, $column) {

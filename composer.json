@@ -22,7 +22,9 @@
         "yiisoft/yii2-bootstrap4": "^2.0",
         "kartik-v/yii2-widget-datepicker": "^1.4",
         "phpoffice/phpspreadsheet": "^1.28",
-        "phpoffice/phpword": "^1.0"
+        "phpoffice/phpword": "^1.0",
+        "kartik-v/yii2-widget-datetimepicker": "^1.5",
+        "mihaildev/yii2-ckeditor": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

@@ -2,11 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\Category;
 use app\models\Conference;
+use app\models\search\CategorySearch;
 use app\models\search\ConferenceSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ConferenceController implements the CRUD actions for Conference model.
@@ -48,6 +52,22 @@ class ConferenceController extends Controller
     }
 
     /**
+     * Lists all Conference models.
+     *
+     * @return string
+     */
+    public function actionList()
+    {
+        $searchModel = new ConferenceSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        return $this->render('list', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
      * Displays a single Conference model.
      * @param int $id ID
      * @return string
@@ -61,6 +81,52 @@ class ConferenceController extends Controller
     }
 
     /**
+     * Displays a single Conference model.
+     * @param int $id ID
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDetails($id)
+    {
+        return $this->render('details', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Displays a single Conference model.
+     * @param int $id ID
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDirections($id)
+    {
+        $conference = $this->findModel($id);
+        $model = new Category([
+            'conference_id' => $id,
+        ]);
+        $searchModel = new CategorySearch();
+        $searchModel->conference_id = $id;
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                if ($model->save()) {
+                    Yii::$app->session->setFlash('success', Yii::t('app', 'Данные успешно сохранены'));
+                    return $this->redirect(Yii::$app->request->referrer);
+                } else {
+                    Yii::$app->session->setFlash('error', Yii::t('app', 'Произошла ошибка при сохранении данных'));
+                }
+            }
+        }
+
+        return $this->render('directions', [
+            'model' => $model,
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
      * Creates a new Conference model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
@@ -68,14 +134,32 @@ class ConferenceController extends Controller
     public function actionCreate()
     {
         $model = new Conference();
+        $model->scenario = 'create';
+        $model->status = 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->file = UploadedFile::getInstance($model, 'file');
+                if ($model->validate()) {
+                    if ($model->file) {
+                        $last_id = ((Conference::find()
+                                ->orderBy(['id' => SORT_DESC])
+                                ->one())->id ?? 0) + 1;
+                        $fileName = $last_id . '_' . time() . '.' . $model->file->extension;
+                        $model->file->saveAs('files/conferences/' . $fileName, false);
+                        $model->filename = $fileName;
+                    }
+
+                    if ($model->save(false)) {
+                        Yii::$app->session->setFlash('success', Yii::t('app', 'Конференция успешно создана'));
+                        return $this->redirect(['directions', 'id' => $model->id]);
+                    } else {
+                        Yii::$app->session->setFlash('error', Yii::t('app', 'Произошла ошибка при сохранении данных'));
+                    }
+                }
             }
-        } else {
-            $model->loadDefaultValues();
         }
+
 
         return $this->render('create', [
             'model' => $model,
@@ -93,8 +177,25 @@ class ConferenceController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->file = UploadedFile::getInstance($model, 'file');
+                if ($model->validate()) {
+                    if ($model->file) {
+                        $last_id = $model->id;
+                        $fileName = $last_id . '_' . time() . '.' . $model->file->extension;
+                        $model->file->saveAs('files/conferences/' . $fileName, false);
+                        $model->filename = $fileName;
+                    }
+
+                    if ($model->save(false)) {
+                        Yii::$app->session->setFlash('success', Yii::t('app', 'Данные успешно сохранены'));
+                        return $this->redirect(['index']);
+                    } else {
+                        Yii::$app->session->setFlash('error', Yii::t('app', 'Произошла ошибка при сохранении данных'));
+                    }
+                }
+            }
         }
 
         return $this->render('update', [
@@ -114,6 +215,18 @@ class ConferenceController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionApply($id){
+        $model = $this->findModel($id);
+        $model->status = 1;
+        if($model->save()){
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Конференция успешно опубликована'));
+        }else{
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Произошла ошибка при сохранении данных'));
+        }
+        return $this->redirect(['index']);
+
     }
 
     /**

@@ -4,9 +4,11 @@ namespace app\controllers;
 
 use app\models\Application;
 use app\models\search\ApplicationSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ApplicationController implements the CRUD actions for Application model.
@@ -68,13 +70,30 @@ class ApplicationController extends Controller
     public function actionCreate()
     {
         $model = new Application();
+        $model->is_first = 1;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->file = UploadedFile::getInstance($model, 'file');
+                if ($model->validate()) {
+                    if ($model->file) {
+                        $last_id = ((Application::find()
+                                ->orderBy(['id' => SORT_DESC])
+                                ->one())->id ?? 0) + 1;
+                        $fileName = $last_id.'_'. time() . '.' . $model->file->extension;
+                        $model->file->saveAs('files/applications/' . $fileName , false);
+                        $model->filename = $fileName;
+                    }
+
+                    if ($model->save(false)) {
+                        Yii::$app->session->setFlash('success', Yii::t('app', 'Данные успешно сохранены'));
+                        $model = new Application();
+                        $model->is_first = 1;
+                    } else {
+                        Yii::$app->session->setFlash('error', Yii::t('app', 'Произошла ошибка при сохранении данных'));
+                    }
+                }
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
