@@ -57,11 +57,29 @@ class Conference extends \yii\db\ActiveRecord
             [['name', 'start_date', 'end_date', 'description', 'short', 'responsible_person', 'responsible_tel'], 'required'],
             [['file'], 'required', 'on' => 'create'],
             [['accepting_end', 'start_date', 'end_date'], 'safe'],
+            [['start_date'], 'checkStartDate', 'skipOnEmpty' => false, 'skipOnError' => false],
+            [['accepting_end'], 'checkAcceptDate', 'skipOnEmpty' => false, 'skipOnError' => false],
             [['description', 'short'], 'string'],
             [['status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['name', 'link', 'filename', 'place', 'responsible_person', 'responsible_tel'], 'string', 'max' => 255],
             [['file'], 'file', 'extensions' => 'doc, docx, pdf, rtf', 'maxFiles' => 1, 'maxSize' => 8 * 1024 * 1024]
         ];
+    }
+
+    public function checkStartDate($attribute, $params){
+        if($this->$attribute > $this->end_date){
+            $this->addError($attribute, 'Дата начала не может быть больше даты окончания');
+            return false;
+        }
+        return true;
+    }
+
+    public function checkAcceptDate($attribute, $params){
+        if($this->$attribute > $this->start_date){
+            $this->addError($attribute, 'Крайний срок подачи заявок не может быть больше даты начала');
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -127,12 +145,8 @@ class Conference extends \yii\db\ActiveRecord
         return $this->responsible_person . ', +998 ' . $this->responsible_tel;
     }
 
-    public function checkDate(){
-        if($this->start_date > $this->end_date){
-            $this->addError('start_date', 'Дата начала не может быть больше даты окончания');
-        }
-        if($this->accepting_end > $this->start_date){
-            $this->addError('accepting_end', 'Крайний срок подачи заявок не может быть больше даты начала');
-        }
+    public function checkForOutdate(){
+        return strtotime(date($this->accepting_end)) > time();
     }
+
 }

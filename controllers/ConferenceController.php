@@ -219,13 +219,11 @@ class ConferenceController extends Controller
 
     public function actionApply($id){
         $model = $this->findModel($id);
-        $model->status = 1;
-        if($model->save()){
-            Yii::$app->session->setFlash('success', Yii::t('app', 'Конференция успешно опубликована'));
-        }else{
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Произошла ошибка при сохранении данных'));
+
+        if ($model->checkForOutdate()){
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Прием заявок на конференцию закончен'));
+            return $this->redirect(Yii::$app->request->referrer);
         }
-        return $this->redirect(['index']);
 
     }
 
