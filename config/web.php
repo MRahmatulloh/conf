@@ -64,8 +64,8 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                '' => 'conference/details',
-                'index' => 'conference/details',
+                '' => 'conference/list',
+                'index' => 'conference/list',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
         ],
