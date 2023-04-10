@@ -80,6 +80,7 @@ $config = [
             'conference/list',
             'conference/details',
             'conference/get-file',
+            'conference/get-info-file',
             'conference/apply',
             'conference/get-directions'
             //
