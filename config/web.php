@@ -65,7 +65,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 '' => 'conference/details',
-                'index' => 'conference/details',
+                'index' => 'conference/list',
                 '<controller:\w+>/<action:\w+>/' => '<controller>/<action>',
             ],
         ],
