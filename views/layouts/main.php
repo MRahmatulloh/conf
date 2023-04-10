@@ -240,9 +240,7 @@ AppAsset::register($this);
             <div class="row">
                 <div class="col-lg-12">
                     <div class="footer_iner text-center">
-                        <p><?= date('Y'); ?> © Toshkent Amaliy Fanlar Universiteti. - Created by <a href="https://t.me/mrahmatulloh"> <i
-                                        class="ti-user"></i> </a><a href="https://t.me/mrahmatulloh"> Rahmatulloh</a>
-                        </p>
+                        <p><?= date('Y'); ?> © Toshkent Amaliy Fanlar Universiteti</p>
                     </div>
                 </div>
             </div>
