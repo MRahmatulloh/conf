@@ -45,7 +45,7 @@ class Category extends \yii\db\ActiveRecord
             [['name', 'conference_id'], 'required'],
             [['status', 'conference_id', 'created_at', 'updated_at'], 'integer'],
             [['name'], 'string', 'max' => 255],
-            [['name'], 'unique'],
+            [['name'], 'checkForDublicate', 'skipOnEmpty' => false, 'skipOnError' => false],
             [['conference_id'], 'exist', 'skipOnError' => false, 'targetClass' => Conference::class, 'targetAttribute' => ['conference_id' => 'id']],
         ];
     }
@@ -65,6 +65,16 @@ class Category extends \yii\db\ActiveRecord
         ];
     }
 
+    public function checkForDublicate($attribute, $params){
+        $dublicate = self::findOne(['name' => $this->$attribute, 'conference_id' => $this->conference_id]);
+
+        if($dublicate){
+            $this->addError($attribute, 'Это направление уже добавлено');
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Gets query for [[Conference]].
      *
@@ -75,8 +85,8 @@ class Category extends \yii\db\ActiveRecord
         return $this->hasOne(Conference::class, ['id' => 'conference_id']);
     }
 
-    public static function selectList()
+    public static function selectList($condition = null)
     {
-        return ArrayHelper::map(self::find()->all(), 'id', 'name');
+        return ArrayHelper::map(self::find()->where($condition)->all(), 'id', 'name');
     }
 }

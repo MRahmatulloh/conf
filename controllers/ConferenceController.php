@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Application;
 use app\models\Category;
 use app\models\Conference;
 use app\models\search\CategorySearch;
@@ -78,6 +79,30 @@ class ConferenceController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
+    }
+
+    public function actionApply($id)
+    {
+        $conference = $this->findModel($id);
+        if ($conference->checkForOutdate()){
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Прием заявок на конференцию закончен'));
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+
+        $model = new Application([
+            'conference_id' => $id,
+            'is_first' => 1
+        ]);
+
+        return $this->render('/application/create', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionGetDirections($id)
+    {
+        $conference = $this->findModel($id);
+        return json_encode(Category::selectList(['conference_id' => $id]));
     }
 
     /**
@@ -217,16 +242,6 @@ class ConferenceController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionApply($id){
-        $model = $this->findModel($id);
-
-        if ($model->checkForOutdate()){
-            Yii::$app->session->setFlash('error', Yii::t('app', 'Прием заявок на конференцию закончен'));
-            return $this->redirect(Yii::$app->request->referrer);
-        }
-
-    }
-
     /**
      * Finds the Conference model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
@@ -241,5 +256,10 @@ class ConferenceController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionGetFile($id){
+        $model = $this->findModel($id);
+        return $model->getFile();
     }
 }

@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "conference".
@@ -146,7 +147,23 @@ class Conference extends \yii\db\ActiveRecord
     }
 
     public function checkForOutdate(){
-        return strtotime(date($this->accepting_end)) > time();
+        return strtotime(date($this->accepting_end)) < time();
+    }
+
+    public static function selectList($condition = null)
+    {
+        return ArrayHelper::map(self::find()->where($condition)->all(), 'id', function($model){
+            /** @var $model Conference */
+            return $model->name . ' - ' . $model->getDateTitle();
+        });
+    }
+
+    public function getFile(){
+        $filepath = 'files/conferences/' . $this->filename;
+
+        if (file_exists($filepath)){
+            return Yii::$app->response->sendFile($filepath);
+        }
     }
 
 }

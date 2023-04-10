@@ -73,9 +73,6 @@ AppAsset::register($this);
             <div class="col-6">
                 <?= $form->field($model, 'file')->fileInput() ?>
             </div>
-            <div class="col-md-6">
-                <?= $form->field($model, 'link')->textInput(['maxlength' => true]) ?>
-            </div>
             <div class="col-12"></div>
             <div class="col-6">
                 <?= $form->field($model, 'status')->radioList([

@@ -22,6 +22,11 @@ AppAsset::register($this);
         <div class="col-6">
             <h2><?= Html::encode($this->title) ?></h2>
         </div>
+        <div class="col-6">
+            <p class="text-right">
+                <?= Html::a("<i class='fas fa-plus white_text'></i> " . ' ', ['create'], ['class' => 'btn btn-success']) ?>
+            </p>
+        </div>
     </div>
 
     <?= GridView::widget([

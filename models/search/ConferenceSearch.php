@@ -40,7 +40,7 @@ class ConferenceSearch extends Conference
      */
     public function search($params)
     {
-        $query = Conference::find();
+        $query = Conference::find()->orderBy(['start_date' => SORT_DESC]);
 
         // add conditions that should always apply here
 

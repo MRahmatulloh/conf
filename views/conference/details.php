@@ -1,6 +1,7 @@
 <?php
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\DetailView;
 
 /** @var yii\web\View $this */
@@ -34,10 +35,12 @@ $this->registerCssFile('/vendors/flipdown/dist/flipdown.css');
             <p class="text-dark mb-4 fs-5 fw-bold"><?= Yii::$app->formatter->asDate($model->accepting_end, 'php:d.m.Y H:i:s') ?></p>
             <p class="text-dark mb-3 fs-4">Mas'ul shaxs: <?= $model->getResponsibleInfo() ?></p>
             <p class="text-dark mb-2 fs-4">Shablon:</p>
-            <a href="<?= $model->filename ?>" download class="btn btn-primary mb-2">Shablonni yuklab olish</a>
+            <a href="<?= Url::to(['/conference/get-file', 'id' => $model->id])?>" download class="btn btn-primary mb-2">Shablonni yuklab olish</a>
 
-            <?php if ($model->status): ?>
-                <a href="conference/apply" class="btn btn-danger d-block">Ishtirok etish</a>
+            <?php if (!$model->checkForOutdate()): ?>
+                <a href="<?= Url::to(['/conference/apply', 'id' => $model->id])?>" class="btn btn-danger d-block">Ishtirok etish</a>
+            <?php else:?>
+                <a href="#" class="btn btn-danger d-block">Arizalar qabul qilish yakunlangan</a>
             <?php endif;?>
         </div>
         <div class="col-md-12 mt-5 description">
