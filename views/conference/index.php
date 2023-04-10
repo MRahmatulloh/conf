@@ -55,8 +55,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => ActionColumn::className(),
-                'template' => '{update} {delete}',
                 'urlCreator' => function ($action, Conference $model, $key, $index, $column) {
+                    if ($action == 'view')
+                        $action = 'details';
+
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],
