@@ -75,6 +75,12 @@ use yii\widgets\MaskedInput;
                     0 => 'Нет',
                 ]) ?>
             </div>
+            <div class="col-6"></div>
+            <?php if (Yii::$app->controller->action->id == 'update'): ?>
+                <div class="col-6">
+                    <?= $form->field($model, 'status')->dropDownList(\app\models\Application::STATUS_ARRAY) ?>
+                </div>
+            <?php endif; ?>
 
             <div class="form-group">
                 <?= Html::submitButton('Отправить', ['class' => 'btn btn-success']) ?>

@@ -49,16 +49,20 @@ AppAsset::register($this);
                 },
             ],
 
-            'sender_first_name',
-
-            'sender_last_name',
+            [
+                'attribute' => 'sender_first_name',
+                'label' => 'ФИО отправителя',
+                'value' => function (Application $model) {
+                    return $model->sender_last_name . ' ' . $model->sender_first_name;
+                },
+            ],
 
             'owners:ntext',
 
             [
                 'attribute' => 'category_id',
                 'value' => function (Application $model) {
-                    return $model->conference ?? '';
+                    return $model->category->name;
                 },
                 'filter' => Select2::widget([
                     'model' => $searchModel,
@@ -81,6 +85,14 @@ AppAsset::register($this);
                 'value' => function(Application $model){
                     return $model->is_first ? 'Да' : 'Нет';
                 }
+            ],
+
+            [
+                'attribute' => 'filename',
+                'format' => 'raw',
+                'value' => function (Application $model) {
+                    return Html::a('Загрузить', Url::to(['/application/get-file', 'id' => $model->id]), ['class' => 'btn btn-primary']);
+                },
             ],
 
             [

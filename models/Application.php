@@ -29,6 +29,7 @@ use yii\db\ActiveRecord;
  * @property int|null $updated_by
  *
  * @property Conference $conference
+ * @property Category $category
  */
 class Application extends ActiveRecord
 {
@@ -92,6 +93,7 @@ class Application extends ActiveRecord
             'is_first' => 'Вы впервые участвуете в этой конференции?',
             'status' => 'Статус',
             'link' => 'Ссылка',
+            'filename' => 'Файл',
             'file' => 'Загрузить файл тезисов или статей (не более 3-5 страниц)',
             'created_at' => 'Время создания',
             'updated_at' => 'Время обновления',
@@ -103,5 +105,18 @@ class Application extends ActiveRecord
     public function getConference()
     {
         return $this->hasOne(Conference::class, ['id' => 'conference_id']);
+    }
+
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
+    }
+
+    public function getFile(){
+        $filepath = 'files/applications/' . $this->filename;
+
+        if (file_exists($filepath)){
+            return Yii::$app->response->sendFile($filepath);
+        }
     }
 }

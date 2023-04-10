@@ -27,7 +27,7 @@ AppAsset::register($this);
 
 <nav class="sidebar dark_sidebar">
     <div class="logo d-flex justify-content-between">
-        <a class="large_logo" href="/site/index"><img src=<?= Yii::$app->request->baseUrl . '/img/logoengl3.svg'; ?> alt=""></a>
+        <a class="large_logo" href="/site/index"><img src=<?= Yii::$app->request->baseUrl . '/img/logo111.svg'; ?> alt=""></a>
         <a class="small_logo" href="/site/index"><img src=<?= Yii::$app->request->baseUrl ?>"/img/af.jpg" alt="" width="80px"></a>
         <div class="sidebar_close_icon d-lg-none">
             <i class="ti-close"></i>

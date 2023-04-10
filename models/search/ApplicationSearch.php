@@ -40,7 +40,7 @@ class ApplicationSearch extends Application
      */
     public function search($params)
     {
-        $query = Application::find();
+        $query = Application::find()->orderBy(['created_at' => SORT_DESC]);
 
         // add conditions that should always apply here
 

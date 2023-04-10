@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php $form = ActiveForm::begin(); ?>
 
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <?= $form->field($model->conference, 'name')->textInput(['maxlength' => true, 'disabled' => true])->label('Конференция') ?>
             </div>
             <div class="col-md-4">

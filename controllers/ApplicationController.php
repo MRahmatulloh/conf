@@ -135,6 +135,12 @@ class ApplicationController extends Controller
         return $this->redirect(['index']);
     }
 
+    public function actionGetFile($id){
+        $model = $this->findModel($id);
+        return $model->getFile();
+    }
+
+
     /**
      * Finds the Application model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
