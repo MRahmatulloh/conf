@@ -5,6 +5,7 @@ namespace app\models;
 use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\ArrayHelper;
+use function PHPUnit\Framework\throwException;
 
 /**
  * This is the model class for table "conference".
@@ -164,6 +165,8 @@ class Conference extends \yii\db\ActiveRecord
         if (file_exists($filepath)){
             return Yii::$app->response->sendFile($filepath);
         }
+
+        return throw new \Exception('Xatolik yuz berdi. Fayl topilmadi');
     }
 
 }

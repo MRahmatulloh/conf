@@ -114,6 +114,7 @@ AppAsset::register($this);
 
             [
                 'class' => ActionColumn::className(),
+                'template' => '{update} {delete}',
                 'urlCreator' => function ($action, Application $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                 }

@@ -112,8 +112,29 @@ class ApplicationController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post())) {
+                $model->file = UploadedFile::getInstance($model, 'file');
+                if ($model->validate()) {
+                    if ($model->file) {
+                        $last_id = ((Application::find()
+                                ->orderBy(['id' => SORT_DESC])
+                                ->one())->id ?? 0) + 1;
+                        $fileName = $last_id.'_'. time() . '.' . $model->file->extension;
+                        $model->file->saveAs('files/applications/' . $fileName , false);
+                        $model->filename = $fileName;
+                    }
+
+                    if ($model->save(false)) {
+                        Yii::$app->session->setFlash('success', Yii::t('app', 'Данные успешно сохранены'));
+                        $model = new Application();
+                        $model->is_first = 1;
+                        return $this->redirect(['index']);
+                    } else {
+                        Yii::$app->session->setFlash('error', Yii::t('app', 'Произошла ошибка при сохранении данных'));
+                    }
+                }
+            }
         }
 
         return $this->render('update', [

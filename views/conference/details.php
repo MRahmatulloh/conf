@@ -35,7 +35,7 @@ $this->registerCssFile('/vendors/flipdown/dist/flipdown.css');
             <p class="text-dark mb-4 fs-5 fw-bold"><?= Yii::$app->formatter->asDate($model->accepting_end, 'php:d.m.Y H:i:s') ?></p>
             <p class="text-dark mb-3 fs-4">Mas'ul shaxs: <?= $model->getResponsibleInfo() ?></p>
             <p class="text-dark mb-2 fs-4">Shablon:</p>
-            <a href="<?= Url::to(['/conference/get-file', 'id' => $model->id])?>" download class="btn btn-primary mb-2">Shablonni yuklab olish</a>
+            <a href="<?= Url::to(['/conference/get-file', 'id' => $model->id])?>" class="btn btn-primary mb-2">Shablonni yuklab olish</a>
 
             <?php if (!$model->checkForOutdate()): ?>
                 <a href="<?= Url::to(['/conference/apply', 'id' => $model->id])?>" class="btn btn-danger d-block">Ishtirok etish</a>

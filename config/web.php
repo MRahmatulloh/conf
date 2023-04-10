@@ -73,9 +73,15 @@ $config = [
         'class' => 'mdm\admin\components\AccessControl',
         'allowActions' => [
             'site/login',
+            'site/logout',
+            //
             'application/create',
             'conference/list',
-            'site/logout',
+            'conference/details',
+            'conference/get-file',
+            'conference/apply',
+            'conference/get-directions'
+            //
 //            'admin/*',
 //            'some-controller/some-action',
             // The actions listed here will be allowed to everyone including guests.

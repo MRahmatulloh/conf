@@ -74,6 +74,19 @@ AppAsset::register($this);
             </li>
         <?php endif; ?>
 
+        <?php if (Yii::$app->user->isGuest): ?>
+            <li class="">
+                <a href="/conference/list" aria-expanded="false">
+                    <div class="nav_icon_small">
+                        <img src="/img/menu-icon/11.svg" alt="">
+                    </div>
+                    <div class="nav_title">
+                        <span>Список Конференции</span>
+                    </div>
+                </a>
+            </li>
+        <?php endif; ?>
+
         <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->can('Administrator')): ?>
             <li class="">
                 <a class="has-arrow" href="#" aria-expanded="false">
@@ -94,18 +107,6 @@ AppAsset::register($this);
                 </ul>
             </li>
         <?php endif; ?>
-
-        <li class="">
-            <a href="/application/create/" aria-expanded="false">
-                <div class="nav_icon_small">
-                    <img src="/img/menu-icon/13.svg" alt="">
-                </div>
-                <div class="nav_title">
-                    <span>Новая заявка</span>
-                </div>
-            </a>
-        </li>
-
     </ul>
 </nav>
 

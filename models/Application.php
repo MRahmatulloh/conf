@@ -118,5 +118,7 @@ class Application extends ActiveRecord
         if (file_exists($filepath)){
             return Yii::$app->response->sendFile($filepath);
         }
+
+        return throw new \Exception('Xatolik yuz berdi. Fayl topilmadi');
     }
 }
