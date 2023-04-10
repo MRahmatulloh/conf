@@ -34,6 +34,7 @@ use function PHPUnit\Framework\throwException;
 class Conference extends \yii\db\ActiveRecord
 {
     public $file;
+    public $infoFile;
 
     /**
      * {@inheritdoc}
@@ -57,14 +58,14 @@ class Conference extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'start_date', 'end_date', 'description', 'short', 'responsible_person', 'responsible_tel'], 'required'],
-            [['file'], 'required', 'on' => 'create'],
+            [['file', 'infoFile'], 'required', 'on' => 'create'],
             [['accepting_end', 'start_date', 'end_date'], 'safe'],
             [['start_date'], 'checkStartDate', 'skipOnEmpty' => false, 'skipOnError' => false],
             [['accepting_end'], 'checkAcceptDate', 'skipOnEmpty' => false, 'skipOnError' => false],
             [['description', 'short'], 'string'],
             [['status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['name', 'link', 'filename', 'place', 'responsible_person', 'responsible_tel'], 'string', 'max' => 255],
-            [['file'], 'file', 'extensions' => 'doc, docx, pdf, rtf', 'maxFiles' => 1, 'maxSize' => 8 * 1024 * 1024]
+            [['file', 'infoFile'], 'file', 'extensions' => 'doc, docx, pdf, rtf', 'maxFiles' => 1, 'maxSize' => 8 * 1024 * 1024],
         ];
     }
 
@@ -96,13 +97,14 @@ class Conference extends \yii\db\ActiveRecord
             'start_date' => 'Дата начала',
             'end_date' => 'Дата окончания',
             'description' => 'Описание',
-            'link' => 'Ссылка',
+            'link' => 'Информационное письмо',
             'place' => 'Место проведения',
             'short' => 'Краткое описание',
             'responsible_person' => 'Ответственное лицо',
             'responsible_tel' => 'Телефон ответственного лица',
             'filename' => 'Filename',
-            'file' => 'Загрузить файл с описанием конференции',
+            'file' => 'Загрузить файл шаблон',
+            'infoFile' => 'Загрузить информационное письмо',
             'status' => 'Статус',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -148,12 +150,12 @@ class Conference extends \yii\db\ActiveRecord
     }
 
     public function checkForOutdate(){
-        return strtotime(date($this->accepting_end)) < time();
+        return strtotime(date($this->accepting_end)) < time() or $this->status <> 1;
     }
 
     public static function selectList($condition = null)
     {
-        return ArrayHelper::map(self::find()->where($condition)->all(), 'id', function($model){
+        return ArrayHelper::map(self::find()->where($condition)->andWhere(['status' => 1])->all(), 'id', function($model){
             /** @var $model Conference */
             return $model->name . ' - ' . $model->getDateTitle();
         });
@@ -161,6 +163,16 @@ class Conference extends \yii\db\ActiveRecord
 
     public function getFile(){
         $filepath = 'files/conferences/' . $this->filename;
+
+        if (file_exists($filepath)){
+            return Yii::$app->response->sendFile($filepath);
+        }
+
+        return throw new \Exception('Xatolik yuz berdi. Fayl topilmadi');
+    }
+
+    public function getInfoFile(){
+        $filepath = 'files/conferences/' . $this->link;
 
         if (file_exists($filepath)){
             return Yii::$app->response->sendFile($filepath);

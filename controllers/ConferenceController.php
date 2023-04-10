@@ -189,14 +189,21 @@ class ConferenceController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->file = UploadedFile::getInstance($model, 'file');
+                $model->infoFile = UploadedFile::getInstance($model, 'infoFile');
                 if ($model->validate()) {
+                    $last_id = ((Conference::find()
+                            ->orderBy(['id' => SORT_DESC])
+                            ->one())->id ?? 0) + 1;
+
                     if ($model->file) {
-                        $last_id = ((Conference::find()
-                                ->orderBy(['id' => SORT_DESC])
-                                ->one())->id ?? 0) + 1;
                         $fileName = $last_id . '_' . time() . '.' . $model->file->extension;
                         $model->file->saveAs('files/conferences/' . $fileName, false);
                         $model->filename = $fileName;
+                    }
+                    if ($model->infoFile) {
+                        $fileName = $last_id . '_info_' . time() . '.' . $model->infoFile->extension;
+                        $model->infoFile->saveAs('files/conferences/' . $fileName, false);
+                        $model->link = $fileName;
                     }
 
                     if ($model->save(false)) {
@@ -229,17 +236,26 @@ class ConferenceController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $model->file = UploadedFile::getInstance($model, 'file');
+                $model->infoFile = UploadedFile::getInstance($model, 'infoFile');
                 if ($model->validate()) {
+                    $last_id = ((Conference::find()
+                            ->orderBy(['id' => SORT_DESC])
+                            ->one())->id ?? 0) + 1;
+
                     if ($model->file) {
-                        $last_id = $model->id;
                         $fileName = $last_id . '_' . time() . '.' . $model->file->extension;
                         $model->file->saveAs('files/conferences/' . $fileName, false);
                         $model->filename = $fileName;
                     }
+                    if ($model->infoFile) {
+                        $fileName = $last_id . '_info_' . time() . '.' . $model->infoFile->extension;
+                        $model->infoFile->saveAs('files/conferences/' . $fileName, false);
+                        $model->link = $fileName;
+                    }
 
                     if ($model->save(false)) {
-                        Yii::$app->session->setFlash('success', Yii::t('app', 'Данные успешно сохранены'));
-                        return $this->redirect(['index']);
+                        Yii::$app->session->setFlash('success', Yii::t('app', 'Конференция успешно создана'));
+                        return $this->redirect(['directions', 'id' => $model->id]);
                     } else {
                         Yii::$app->session->setFlash('error', Yii::t('app', 'Произошла ошибка при сохранении данных'));
                     }
@@ -285,5 +301,10 @@ class ConferenceController extends Controller
     public function actionGetFile($id){
         $model = $this->findModel($id);
         return $model->getFile();
+    }
+
+    public function actionGetInfoFile($id){
+        $model = $this->findModel($id);
+        return $model->getInfoFile();
     }
 }

@@ -121,4 +121,57 @@ class Application extends ActiveRecord
 
         return throw new \Exception('Xatolik yuz berdi. Fayl topilmadi');
     }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if ($insert) {
+            $text =
+                "№: #Ариза #А" . $this->id . PHP_EOL .
+                'Янги кушилди'. PHP_EOL .
+                'Конференция: '. $this->conference->name . PHP_EOL .
+                'Йуналиш: '. $this->category->name . PHP_EOL .
+                'Статус: ' . self::STATUS_ARRAY[$this->status ?? 1] . PHP_EOL .
+                'Сана: ' . date('d.m.Y H:i:s', $this->created_at) . PHP_EOL .
+                'Киритди: ' . $this->sender_last_name . ' ' . $this->sender_first_name . PHP_EOL;
+
+            Yii::$app->telegram->sendMessage([
+                'chat_id' => '-1001906470744',
+                'text' => $text,
+                "parse_mode" => "markdown",
+                "reply_markup" => json_encode(["inline_keyboard" => [
+                    [
+                        [
+                            "text" => "Очиб кориш",
+                            "url" => "http://" . $_SERVER['SERVER_NAME'] . \Yii::$app->getUrlManager()->createUrl(['application/index', 'ApplicationSearch[id]' => $this->id])
+                        ]
+                    ]
+                ]])
+            ]);
+        } else {
+            $text =
+                "№: #Ариза #А" . $this->id . PHP_EOL .
+                'Янги кушилди'. PHP_EOL .
+                'Конференция: '. $this->conference->name . PHP_EOL .
+                'Йуналиш: '. $this->category->name . PHP_EOL .
+                'Статус: ' . self::STATUS_ARRAY[$this->status ?? 1] . PHP_EOL .
+                'Сана: ' . date('d.m.Y H:i:s', $this->created_at) . PHP_EOL .
+                'Киритди: ' . $this->sender_last_name . ' ' . $this->sender_first_name . PHP_EOL;
+
+            Yii::$app->telegram->sendMessage([
+                'chat_id' => '-1001906470744',
+                'text' => $text,
+                "parse_mode" => "markdown",
+                "reply_markup" => json_encode(["inline_keyboard" => [
+                    [
+                        [
+                            "text" => "Очиб кориш",
+                            "url" => "http://" . $_SERVER['SERVER_NAME'] . \Yii::$app->getUrlManager()->createUrl(['application/index', 'ApplicationSearch[id]' => $this->id])
+                        ]
+                    ]
+                ]])
+            ]);
+
+        }
+        return true;
+    }
 }

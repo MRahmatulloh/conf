@@ -71,6 +71,9 @@ AppAsset::register($this);
                 <?= $form->field($model, 'place')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-6">
+                <?= $form->field($model, 'infoFile')->fileInput() ?>
+            </div>
+            <div class="col-6">
                 <?= $form->field($model, 'file')->fileInput() ?>
             </div>
             <div class="col-12"></div>
