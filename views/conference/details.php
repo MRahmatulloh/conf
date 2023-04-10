@@ -42,7 +42,7 @@ $this->registerCssFile('/vendors/flipdown/dist/flipdown.css');
             <?php if (!$model->checkForOutdate()): ?>
                 <a href="<?= Url::to(['/conference/apply', 'id' => $model->id])?>" class="btn btn-danger d-block">Ishtirok etish</a>
             <?php else:?>
-                <a href="#" class="btn btn-danger d-block">Arizalar qabul qilish yakunlangan</a>
+                <a href="#" class="btn btn-danger d-block">Arizalar qabul qilish yakunlangan yoki anjuman faol holatda emas</a>
             <?php endif;?>
         </div>
         <div class="col-md-12 mt-5 description">
