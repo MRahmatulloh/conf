@@ -71,7 +71,7 @@ class Application extends ActiveRecord
             [['category_id', 'is_first', 'status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['sender_first_name', 'sender_last_name', 'article_name', 'phone', 'email', 'link', 'filename'], 'string', 'max' => 255],
             [['file'], 'required', 'on' => 'create'],
-            [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'doc, docx, pdf, rtf', 'maxFiles' => 1, 'maxSize' => 8 * 1024 * 1024]
+            [['file'], 'file', 'extensions' => 'doc, docx, pdf, rtf', 'maxFiles' => 1, 'maxSize' => 8 * 1024 * 1024]
         ];
     }
 
