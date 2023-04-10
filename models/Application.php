@@ -150,7 +150,7 @@ class Application extends ActiveRecord
         } else {
             $text =
                 "№: #Ариза #А" . $this->id . PHP_EOL .
-                'Янги кушилди'. PHP_EOL .
+                'Узгартирилди'. PHP_EOL .
                 'Конференция: '. $this->conference->name . PHP_EOL .
                 'Йуналиш: '. $this->category->name . PHP_EOL .
                 'Статус: ' . self::STATUS_ARRAY[$this->status ?? 1] . PHP_EOL .
